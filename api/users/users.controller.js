@@ -37,6 +37,11 @@ class UsersController {
   }
   async update(req, res, next) {
     try {
+
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Forbidden: You do not have permission to perform this action.' });
+      }
+
       const id = req.params.id;
       const data = req.body;
       const userModified = await usersService.update(id, data);
@@ -48,6 +53,11 @@ class UsersController {
   }
   async delete(req, res, next) {
     try {
+
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Forbidden: You do not have permission to perform this action.' });
+      }
+
       const id = req.params.id;
       await usersService.delete(id);
       req.io.emit("user:delete", { id });
@@ -59,11 +69,11 @@ class UsersController {
   async login(req, res, next) {
     try {
       const { email, password } = req.body;
-      const userId = await usersService.checkPasswordUser(email, password);
-      if (!userId) {
-        throw new UnauthorizedError();
+      const user = await usersService.checkPasswordUser(email, password);
+      if (!user) {
+        throw new UnauthorizedError("utilisateur ou mot de passe incorrect");
       }
-      const token = jwt.sign({ userId }, config.secretJwtToken, {
+      const token = jwt.sign({ user }, config.secretJwtToken, {
         expiresIn: "3d",
       });
       res.json({

@@ -4,16 +4,18 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const NotFoundError = require("./errors/not-found");
 const userRouter = require("./api/users/users.router");
+const articleRouter = require("./api/articles/articles.router");
 const usersController = require("./api/users/users.controller");
 const authMiddleware = require("./middlewares/auth");
-require("./api/articles/articles.schema"); // temporaire
 const app = express();
+
+// require("./api/articles/articles.schema"); // temporaire
 
 const server = http.createServer(app);
 const io = new Server(server);
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  // console.log("a user connected");
   /*socket.on("my_event", (data) => {
     console.log(data);
   });
@@ -28,7 +30,13 @@ app.use((req, res, next) => {
 app.use(cors());
 app.use(express.json());
 
+/*
+* routes utilisés lorsque l'utilisateur est connecté
+* pour créer un compte pour test il faut supprimer le middleware du app.use
+*/
 app.use("/api/users", authMiddleware, userRouter);
+app.use("/api/articles", articleRouter); // Articles sans auth globale
+
 app.post("/login", usersController.login);
 
 app.use("/", express.static("public"));

@@ -27,7 +27,9 @@ class UserService {
     if (!bool) {
       return false;
     }
-    return user._id;
+
+    const { password: _, ...response } = user.toObject(); // on retire le mot de passe des données JWT car elles sont lisibles (jwt.io)
+    return response;
   }
 }
 

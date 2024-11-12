@@ -6,10 +6,10 @@ module.exports = (req, res, next) => {
   try {
     const token = req.headers["x-access-token"];
     if (!token) {
-      throw "not token";
+      throw "no token";
     }
-    const decoded = jwt.verify(token, config.secretJwtToken);
-    req.user = decoded;
+    req.user = jwt.verify(token, config.secretJwtToken)['user'];
+    console.log(req.user);
     next();
   } catch (message) {
     next(new UnauthorizedError(message));

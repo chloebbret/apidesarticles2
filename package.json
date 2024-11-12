@@ -7,7 +7,9 @@
     "test": "tests"
   },
   "scripts": {
+    "start": "node server.js",
     "serve": "nodemon www/app.js",
+    "dev": "nodemon www/app.js",
     "test": "jest"
   },
   "keywords": [],
