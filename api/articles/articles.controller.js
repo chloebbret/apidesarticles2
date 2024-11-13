@@ -36,7 +36,8 @@ class ArticleController {
 
     async create(req, res, next) {
         try {
-            const article = await articleService.create(req.body);
+            let article = await articleService.create(req.body);
+            article.user = req.user; // 5.7 enregistrer l'utilisateur qui crée l'article
             req.io.emit("article:create", article);
             res.status(201).json(article);
         } catch (err) {
