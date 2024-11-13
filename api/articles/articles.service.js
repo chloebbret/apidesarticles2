@@ -10,7 +10,8 @@ class ArticleService {
     }
 
     getByUserId(userId) {
-        return Article.find({ user: userId });
+        return Article.find({ user: userId })
+            .populate('user', '-password');
     }
 
     create(data) {

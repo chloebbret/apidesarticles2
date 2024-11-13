@@ -34,7 +34,7 @@ app.use(express.json());
 * routes utilisés lorsque l'utilisateur est connecté
 * pour créer un compte pour test il faut supprimer le middleware du app.use
 */
-app.use("/api/users", authMiddleware, userRouter);
+app.use("/api/users", userRouter);
 app.use("/api/articles", articleRouter); // Articles sans auth globale
 
 app.post("/login", usersController.login);
