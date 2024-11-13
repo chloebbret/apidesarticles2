@@ -9,7 +9,6 @@ module.exports = (req, res, next) => {
       throw "no token";
     }
     req.user = jwt.verify(token, config.secretJwtToken)['user'];
-    console.log(req.user);
     next();
   } catch (message) {
     next(new UnauthorizedError(message));
