@@ -2,6 +2,7 @@ const NotFoundError = require("../../errors/not-found");
 const UnauthorizedError = require("../../errors/unauthorized");
 const articleService = require("./articles.service");
 const userService = require("../users/users.service"); // Importez le service des utilisateurs
+const ForbiddenError = require("../../errors/forbidden");
 
 class ArticleController {
     async getAll(req, res, next) {
@@ -51,14 +52,13 @@ class ArticleController {
         try {
             const id = req.params.id;
             const data = req.body;
-            const user = await userService.getById(req.user.id); // Récupérer les informations de l'utilisateur connecté
 
-            // Vérifier si l'utilisateur est un admin
-            if (user.role !== "admin") {
-                throw new UnauthorizedError("You are not authorized to perform this action");
+            // Check if user is an admin
+            if (req.user.role !== "admin") {
+                throw new ForbiddenError("You are not authorized to perform this action");
             }
 
-            const articleModified = await articleService.update(id, data);
+            let articleModified = await articleService.update(id, data);
             res.json(articleModified);
         } catch (err) {
             next(err);
@@ -71,7 +71,7 @@ class ArticleController {
 
             // Vérifier le rôle de l'utilisateur connecté
             if (req.user.role !== 'admin') {
-                throw new UnauthorizedError('You are not authorized to perform this action');
+                throw new ForbiddenError('You are not authorized to perform this action');
             }
 
             const article = await articleService.get(id);

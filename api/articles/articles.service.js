@@ -19,7 +19,7 @@ class ArticleService {
         return article.save();
     }
 
-    update(id, data) {
+    async update(id, data) {
         return Article.findByIdAndUpdate(id, data, { new: true });
     }
 
