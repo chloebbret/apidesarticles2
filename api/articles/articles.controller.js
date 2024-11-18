@@ -1,5 +1,7 @@
 const NotFoundError = require("../../errors/not-found");
+const UnauthorizedError = require("../../errors/unauthorized");
 const articleService = require("./articles.service");
+const userService = require("../users/users.service"); // Importez le service des utilisateurs
 
 class ArticleController {
     async getAll(req, res, next) {
@@ -49,6 +51,13 @@ class ArticleController {
         try {
             const id = req.params.id;
             const data = req.body;
+            const user = await userService.getById(req.user.id); // Récupérer les informations de l'utilisateur connecté
+
+            // Vérifier si l'utilisateur est un admin
+            if (user.role !== "admin") {
+                throw new UnauthorizedError("You are not authorized to perform this action");
+            }
+
             const articleModified = await articleService.update(id, data);
             res.json(articleModified);
         } catch (err) {
@@ -59,8 +68,19 @@ class ArticleController {
     async delete(req, res, next) {
         try {
             const id = req.params.id;
+
+            // Vérifier le rôle de l'utilisateur connecté
+            if (req.user.role !== 'admin') {
+                throw new UnauthorizedError('You are not authorized to perform this action');
+            }
+
+            const article = await articleService.get(id);
+            if (!article) {
+                throw new NotFoundError('Article not found');
+            }
+
             await articleService.delete(id);
-            req.io.emit("article:delete", { id });
+            req.io.emit('article:delete', { id });
             res.status(204).send();
         } catch (err) {
             next(err);

@@ -33,25 +33,25 @@ describe("tester API users", () => {
 
   test("[Users] Get All", async () => {
     const res = await request(app)
-      .get("/api/users")
-      .set("x-access-token", token);
+        .get("/api/users")
+        .set("x-access-token", token);
     expect(res.status).toBe(200);
     expect(res.body.length).toBeGreaterThan(0);
   });
 
   test("[Users] Create User", async () => {
     const res = await request(app)
-      .post("/api/users")
-      .send(MOCK_DATA_CREATED)
-      .set("x-access-token", token);
+        .post("/api/users")
+        .send(MOCK_DATA_CREATED)
+        .set("x-access-token", token);
     expect(res.status).toBe(201);
     expect(res.body.name).toBe(MOCK_DATA_CREATED.name);
   });
 
   test("Est-ce userService.getAll", async () => {
     const spy = jest
-      .spyOn(usersService, "getAll")
-      .mockImplementation(() => "test");
+        .spyOn(usersService, "getAll")
+        .mockImplementation(() => "test");
     await request(app).get("/api/users").set("x-access-token", token);
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(1);
